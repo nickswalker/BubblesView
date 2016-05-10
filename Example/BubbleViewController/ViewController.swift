@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import BubbleViewController
 
-class ViewController: UIViewController {
+class ViewController: BubbleViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

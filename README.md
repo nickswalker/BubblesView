@@ -1,6 +1,6 @@
 # BubbleViewController
 
-[![CI Status](http://img.shields.io/travis/Nicholas Walker/BubbleViewController.svg?style=flat)](https://travis-ci.org/Nicholas Walker/BubbleViewController)
+[![CI Status](http://img.shields.io/travis/nickswalker/BubbleViewController.svg?style=flat)](https://travis-ci.org/nickswalker/BubbleViewController)
 [![Version](https://img.shields.io/cocoapods/v/BubbleViewController.svg?style=flat)](http://cocoapods.org/pods/BubbleViewController)
 [![License](https://img.shields.io/cocoapods/l/BubbleViewController.svg?style=flat)](http://cocoapods.org/pods/BubbleViewController)
 [![Platform](https://img.shields.io/cocoapods/p/BubbleViewController.svg?style=flat)](http://cocoapods.org/pods/BubbleViewController)
