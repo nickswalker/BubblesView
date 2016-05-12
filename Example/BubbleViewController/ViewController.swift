@@ -13,6 +13,9 @@ class ViewController: BubbleViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        dataSource = DataSource()
+        delegate = self
+        reloadData()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -23,3 +26,9 @@ class ViewController: BubbleViewController {
 
 }
 
+
+extension ViewController: BubbleViewDelegate {
+    func didSelectBubble(bubble: Int) {
+        
+    }
+}

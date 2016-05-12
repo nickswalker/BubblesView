@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  BubbleViewController: 111dc2453849ad7ebf573aab99e115745c9f9128
+  BubbleViewController: 99b3d78994b1479847b2610739ddb85c4fdc369a
 
 PODFILE CHECKSUM: 84b66bae748d1510c035346c86cfdbaeb50672a4
 
