@@ -5,7 +5,7 @@ public class BubbleView: UIView {
     public var label = UILabel()
     public var imageView = UIImageView()
 
-    internal var index = -1
+    internal var index: Int?
 
     override public init(frame: CGRect) {
         super.init(frame: frame)

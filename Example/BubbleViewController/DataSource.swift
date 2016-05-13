@@ -15,10 +15,10 @@ class DataSource: BubbleViewDataSource {
     func focusedBubble() -> Int {
         return focused
     }
-    func relatedForBubble(bubble: Int) -> [Int] {
+    func relatedForBubble(bubble: Int) -> Set<Int> {
         var related = [0,1,2,3,4,5]
         related.removeAtIndex(bubble)
-        return related
+        return Set(related)
     }
     public func configureBubble(index: Int) -> BubbleView {
         let view = BubbleView()

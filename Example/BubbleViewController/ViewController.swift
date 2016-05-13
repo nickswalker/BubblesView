@@ -29,6 +29,6 @@ class ViewController: BubbleViewController {
 
 extension ViewController: BubbleViewDelegate {
     func didSelectBubble(bubble: Int) {
-        
+        focus(bubble)
     }
 }
