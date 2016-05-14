@@ -21,17 +21,18 @@ public class BubbleViewController: UIViewController {
     private var indexToBubble = [Int: BubbleView]()
     private var currentRelated = Set<Int>()
     private var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
-    private var noRotationBehavior = UIDynamicItemBehavior()
+    private var bubbleBehaviors = [BubbleView: BubbleBehavior]()
     private var collisionBehavior = UICollisionBehavior()
+
+    private var offset = CGPointZero
 
 
     private var tapRecognizers = [BubbleView: UITapGestureRecognizer]()
     private var panRecognizers = [BubbleView: UIPanGestureRecognizer]()
     public override func viewDidLoad() {
         animator = UIDynamicAnimator(referenceView: view)
+        collisionBehavior.collisionMode = .Everything
         collisionBehavior.translatesReferenceBoundsIntoBoundary = true
-        noRotationBehavior.allowsRotation = false
-        animator.addBehavior(noRotationBehavior)
         animator.addBehavior(collisionBehavior)
     }
 
@@ -169,7 +170,6 @@ public class BubbleViewController: UIViewController {
     // MARK: Focus
     private func configureFocused(bubble: BubbleView) {
         assert(bubble.index != nil)
-        addBehaviors(bubble)
         let newSnap = UISnapBehavior(item: bubble, snapToPoint: CGPoint(x: view.frame.width / 2.0, y: view.frame.height / 2.0))
         animator.addBehavior(newSnap)
         focusedSnap = newSnap
@@ -179,12 +179,12 @@ public class BubbleViewController: UIViewController {
     private func disengageFocused(bubble: BubbleView) {
         // Remove the old bubble
         tapRecognizers.removeValueForKey(bubble)
-        removeBehaviors(bubble)
         if let snap = focusedSnap {
             animator.removeBehavior(snap)
         }
 
         focusedBubble = nil
+        focusedSnap = nil
     }
 
     // MARK: Related
@@ -195,24 +195,24 @@ public class BubbleViewController: UIViewController {
         panRecognizer.addTarget(self, action: #selector(didPanBubble))
         bubble.addGestureRecognizer(panRecognizer)
         panRecognizers[bubble] = panRecognizer
-        bubble.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-        addBehaviors(bubble)
     }
 
     private func disengageRelated(bubble: BubbleView){
-        removeBehaviors(bubble)
         bubble.removeGestureRecognizer(panRecognizers[bubble]!)
         panRecognizers.removeValueForKey(bubble)
     }
 
     // MARK: Behaviors
     private func addBehaviors(bubble: BubbleView){
-        noRotationBehavior.addItem(bubble)
+        let bubbleBehavior = BubbleBehavior(item: bubble)
+        bubbleBehaviors[bubble] = bubbleBehavior
+        animator.addBehavior(bubbleBehavior)
         collisionBehavior.addItem(bubble)
     }
 
     private func removeBehaviors(bubble: BubbleView) {
-        noRotationBehavior.removeItem(bubble)
+        animator.removeBehavior(bubbleBehaviors[bubble]!)
+        bubbleBehaviors.removeValueForKey(bubble)
         collisionBehavior.removeItem(bubble)
     }
 
@@ -237,16 +237,49 @@ public class BubbleViewController: UIViewController {
 
     func didPanBubble(recognizer: UIPanGestureRecognizer) {
         let target = recognizer.view as! BubbleView
+        let location = recognizer.locationInView(view)
         switch recognizer.state {
         case .Began:
+
+            // Capture the initial touch offset from the itemView's center.
+            let center = target.center
+            offset.x = location.x - center.x
+            offset.y = location.y - center.y
+
             // Free bubble from animator
             removeAttachment(target)
             removeBehaviors(target)
-        case .Ended:
+        case .Cancelled, .Ended:
             addAttachment(target)
             addBehaviors(target)
+            let behavior = bubbleBehaviors[target]
+            let velocity = recognizer.velocityInView(view)
+            let amplifiedVelocity = CGPoint(x: velocity.x * 2.0, y: velocity.y * 2.0)
+            behavior!.addLinearVelocity(amplifiedVelocity)
         case .Changed:
-            target.center = recognizer.locationInView(view)
+
+            let referenceBounds = view.bounds
+            let referenceWidth = referenceBounds.width
+            let referenceHeight = referenceBounds.height
+
+            // Get item bounds.
+            let itemBounds = target.bounds
+            let itemHalfWidth = itemBounds.width / 2.0
+            let itemHalfHeight = itemBounds.height / 2.0
+
+            var newLocation = location
+            // Apply the initial offset.
+            newLocation.x -= offset.x
+            newLocation.y -= offset.y
+
+            // Bound the item position inside the reference view.
+            newLocation.x = max(itemHalfWidth, newLocation.x)
+            newLocation.x = min(referenceWidth - itemHalfWidth, newLocation.x)
+            newLocation.y = max(itemHalfHeight, newLocation.y)
+            newLocation.y = min(referenceHeight - itemHalfHeight, newLocation.y)
+
+            // Apply the resulting item center.
+            target.center = newLocation
         default:
             ()
         }
@@ -261,10 +294,12 @@ public class BubbleViewController: UIViewController {
         bubble.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         view.addSubview(bubble)
         indexToBubble[bubble.index!] = bubble
+        addBehaviors(bubble)
     }
 
     private func removeBubble(bubble: BubbleView) {
         tapRecognizers.removeValueForKey(bubble)
+        removeBehaviors(bubble)
         bubble.removeFromSuperview()
         indexToBubble.removeValueForKey(bubble.index!)
         bubble.index = nil
