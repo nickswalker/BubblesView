@@ -10,7 +10,7 @@ public protocol BubbleViewDelegate {
     func didSelectBubble(bubble: Int)
 }
 
-public class BubbleViewController: UIViewController {
+public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate {
     public var dataSource: BubbleViewDataSource?
     public var delegate: BubbleViewDelegate?
     var animator: UIDynamicAnimator!
@@ -70,9 +70,6 @@ public class BubbleViewController: UIViewController {
         }
     }
 
-    public override func viewWillLayoutSubviews() {
-
-    }
 
     /**
      Dynamically reconfigures the graph to have a new focus node. Animates out unrelated nodes, preserving 
@@ -135,7 +132,7 @@ public class BubbleViewController: UIViewController {
             let newFocused = self.dataSource!.configureBubble(bubbleIndex)
             newFocused.index = bubbleIndex
             // We have to add it to the hiearchy
-            newFocused.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+            newFocused.frame = CGRect(origin: view.center, size: CGSize(width: 100.0, height: 100.0))
             addBubble(newFocused)
             configureFocused(newFocused)
         }
@@ -171,6 +168,7 @@ public class BubbleViewController: UIViewController {
     private func configureFocused(bubble: BubbleView) {
         assert(bubble.index != nil)
         let newSnap = UISnapBehavior(item: bubble, snapToPoint: CGPoint(x: view.frame.width / 2.0, y: view.frame.height / 2.0))
+        newSnap.damping = 0.5
         animator.addBehavior(newSnap)
         focusedSnap = newSnap
         focusedBubble = bubble
@@ -218,10 +216,11 @@ public class BubbleViewController: UIViewController {
 
     private func addAttachment(bubble: BubbleView) {
         assert(focusedBubble != nil)
-        let attachment = UIAttachmentBehavior.limitAttachmentWithItem(bubble, offsetFromCenter: UIOffsetZero, attachedToItem: focusedBubble!, offsetFromCenter: UIOffsetZero)
+        let attachment = UIAttachmentBehavior(item: bubble, attachedToItem: focusedBubble!)
         attachment.length = 120
         relatedAttachments[bubble] = attachment
         animator.addBehavior(attachment)
+        collisionBehavior.addItem(bubble)
     }
 
     private func removeAttachment(bubble: BubbleView) {
@@ -300,7 +299,12 @@ public class BubbleViewController: UIViewController {
     private func removeBubble(bubble: BubbleView) {
         tapRecognizers.removeValueForKey(bubble)
         removeBehaviors(bubble)
-        bubble.removeFromSuperview()
+        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 2.0, options: .CurveEaseIn, animations: {
+            bubble.transform = CGAffineTransformMakeScale(0.1, 0.1)
+            }) { (_) in
+                bubble.removeFromSuperview()
+                bubble.transform = CGAffineTransformMakeScale(1.0, 1.0)
+        }
         indexToBubble.removeValueForKey(bubble.index!)
         bubble.index = nil
     }
