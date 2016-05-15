@@ -17,10 +17,19 @@ public class BubbleView: UIView {
         imageView.bottomAnchor.constraintEqualToAnchor(bottomAnchor)
 
         label.textColor = .whiteColor()
+        label.font = UIFont.boldSystemFontOfSize(21.0)
         label.textAlignment = .Center
+        /*
+         label.centerXAnchor.constraintEqualToAnchor(centerXAnchor)
+         label.centerYAnchor.constraintEqualToAnchor(centerYAnchor)
+         label.widthAnchor.constraintEqualToAnchor(widthAnchor)
+         label.heightAnchor.constraintEqualToAnchor(heightAnchor)
+         */
     }
 
     override public func layoutSubviews() {
+        print("didlayout")
+        label.frame = CGRect(origin: CGPointZero, size: label.intrinsicContentSize())
         label.frame = CGRect(x: 10, y: frame.height / 2.0 - label.frame.height / 2.0, width: frame.width - 20.0, height: 30)
         layer.cornerRadius = frame.width / 2.0
     }
