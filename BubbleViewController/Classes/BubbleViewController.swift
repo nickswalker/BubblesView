@@ -239,18 +239,21 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
         let location = recognizer.locationInView(view)
         switch recognizer.state {
         case .Began:
-
+            // Nothing should come between the user's finger and the view
+            view.bringSubviewToFront(target)
             // Capture the initial touch offset from the itemView's center.
             let center = target.center
             offset.x = location.x - center.x
             offset.y = location.y - center.y
 
-            // Free bubble from animator
+            // Free the bubble from animator
             removeAttachment(target)
             removeBehaviors(target)
+            target.transform = CGAffineTransformMakeScale(1.05, 1.05)
         case .Cancelled, .Ended:
             addAttachment(target)
             addBehaviors(target)
+            target.transform = CGAffineTransformIdentity
             let behavior = bubbleBehaviors[target]
             let velocity = recognizer.velocityInView(view)
             let amplifiedVelocity = CGPoint(x: velocity.x * 2.0, y: velocity.y * 2.0)
@@ -299,13 +302,35 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
     private func removeBubble(bubble: BubbleView) {
         tapRecognizers.removeValueForKey(bubble)
         removeBehaviors(bubble)
-        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 2.0, options: .CurveEaseIn, animations: {
-            bubble.transform = CGAffineTransformMakeScale(0.1, 0.1)
-            }) { (_) in
-                bubble.removeFromSuperview()
-                bubble.transform = CGAffineTransformMakeScale(1.0, 1.0)
-        }
+        animateRemoveSubview(bubble)
         indexToBubble.removeValueForKey(bubble.index!)
         bubble.index = nil
+    }
+
+    // MARK: Animation
+    private func animateRemoveSubview(view: UIView) {
+        // The view shouldn't cover anything as it leaves
+        self.view.sendSubviewToBack(view)
+        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 2.0, options: .CurveEaseIn, animations: {
+            view.transform = CGAffineTransformMakeScale(0.1, 0.1)
+        }) { (_) in
+            view.removeFromSuperview()
+        }
+    }
+
+    private func animateGrow(view: UIView) {
+        animateToScale(view, scale: 1.2)
+    }
+
+    private func animateToNormalSize(view: UIView) {
+        animateToScale(view, scale: 1.0)
+    }
+
+    private func animateToScale(view: UIView, scale: CGFloat) {
+        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 2.0, options: .CurveEaseIn, animations: {
+            view.transform = CGAffineTransformMakeScale(scale, scale)
+        }) { (_) in
+            view.transform = CGAffineTransformMakeScale(scale, scale)
+        }
     }
 }
