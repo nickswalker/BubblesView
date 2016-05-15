@@ -9,7 +9,7 @@ class BubbleBehavior: UIDynamicBehavior {
     init(item: UIDynamicItem) {
         self.item = item
         itemBehavior = UIDynamicItemBehavior(items: [item])
-        itemBehavior.density = 0.01
+        itemBehavior.density = 0.1
         itemBehavior.resistance = 5
         itemBehavior.friction = 0.0
         itemBehavior.allowsRotation = false
