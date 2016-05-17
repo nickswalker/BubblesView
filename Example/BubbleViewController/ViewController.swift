@@ -9,13 +9,14 @@
 import UIKit
 import BubbleViewController
 
-class ViewController: BubbleViewController {
-
+class ViewController: BubblesViewController {
+    let numberSupplier = DataSource()
+    var path = [Int]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataSource = DataSource()
-        delegate = self
-        reloadData()
+        bubblesView.dataSource = numberSupplier
+        bubblesView.reloadData()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
@@ -27,8 +28,16 @@ class ViewController: BubbleViewController {
 }
 
 
-extension ViewController: BubbleViewDelegate {
+extension ViewController: BubblesViewDelegate {
     func didSelectBubble(bubble: Int) {
-        focus(bubble)
+        if bubble == numberSupplier.focused && path.count > 0{
+            let prev = path.removeLast()
+            numberSupplier.focused = prev
+            bubblesView.focus(prev)
+        } else if bubble != numberSupplier.focused {
+            path.append(numberSupplier.focused)
+            numberSupplier.focused = bubble
+            bubblesView.focus(bubble)
+        }
     }
 }

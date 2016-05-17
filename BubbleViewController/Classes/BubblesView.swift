@@ -1,39 +1,47 @@
-import UIKit
+import Foundation
 
-public protocol BubbleViewDataSource {
+public protocol BubblesViewDataSource {
     func focusedBubble() -> Int
     func relatedForBubble(bubble: Int) -> Set<Int>
     func configureBubble(index: Int) -> BubbleView
 }
 
-public protocol BubbleViewDelegate {
+public protocol BubblesViewDelegate {
     func didSelectBubble(bubble: Int)
 }
 
-public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate {
-    public var dataSource: BubbleViewDataSource?
-    public var delegate: BubbleViewDelegate?
+public class BubblesView: UIView {
     var animator: UIDynamicAnimator!
 
     private var focusedBubble: BubbleView?
     private var focusedSnap: UISnapBehavior?
 
-    private var indexToBubble = [Int: BubbleView]()
-    private var currentRelated = Set<Int>()
-    private var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
     private var bubbleBehaviors = [BubbleView: BubbleBehavior]()
     private var collisionBehavior = UICollisionBehavior()
 
-    private var offset = CGPointZero
-
-
     private var tapRecognizers = [BubbleView: UITapGestureRecognizer]()
     private var panRecognizers = [BubbleView: UIPanGestureRecognizer]()
-    public override func viewDidLoad() {
-        animator = UIDynamicAnimator(referenceView: view)
+
+    private var indexToBubble = [Int: BubbleView]()
+    private var currentRelated = Set<Int>()
+    private var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
+
+    public var dataSource: BubblesViewDataSource?
+    public var delegate: BubblesViewDelegate?
+
+    private var offset = CGPointZero
+
+    // MARK: Initialization
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        animator = UIDynamicAnimator(referenceView: self)
         collisionBehavior.collisionMode = .Everything
         collisionBehavior.translatesReferenceBoundsIntoBoundary = true
         animator.addBehavior(collisionBehavior)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     /**
@@ -72,7 +80,7 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
 
 
     /**
-     Dynamically reconfigures the graph to have a new focus node. Animates out unrelated nodes, preserving 
+     Dynamically reconfigures the graph to have a new focus node. Animates out unrelated nodes, preserving
      shared relations and removing unrelated nodes.
 
      - parameter bubble: <#bubble description#>
@@ -87,7 +95,7 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
         // Add ones that aren't in the current related
         let toAdd: Set<Int> = {
             var temp = newRelated.subtract(currentRelated)
-            // The current focused bubble is already in the hiearchy, so we'll 
+            // The current focused bubble is already in the hiearchy, so we'll
             // handle connecting it seperately
             temp.remove(focusedBubble?.index ?? -2)
             return temp
@@ -132,7 +140,7 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
             let newFocused = self.dataSource!.configureBubble(bubbleIndex)
             newFocused.index = bubbleIndex
             // We have to add it to the hiearchy
-            newFocused.frame = CGRect(origin: view.center, size: CGSize(width: 100.0, height: 100.0))
+            newFocused.frame = CGRect(origin: center, size: CGSize(width: 100.0, height: 100.0))
             addBubble(newFocused)
             configureFocused(newFocused)
         }
@@ -167,7 +175,8 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
     // MARK: Focus
     private func configureFocused(bubble: BubbleView) {
         assert(bubble.index != nil)
-        let newSnap = UISnapBehavior(item: bubble, snapToPoint: CGPoint(x: view.frame.width / 2.0, y: view.frame.height / 2.0))
+        //animateGrow(bubble)
+        let newSnap = UISnapBehavior(item: bubble, snapToPoint: center)
         newSnap.damping = 0.5
         animator.addBehavior(newSnap)
         focusedSnap = newSnap
@@ -180,6 +189,8 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
         if let snap = focusedSnap {
             animator.removeBehavior(snap)
         }
+
+        //animateToNormalSize(bubble)
 
         focusedBubble = nil
         focusedSnap = nil
@@ -236,11 +247,11 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
 
     func didPanBubble(recognizer: UIPanGestureRecognizer) {
         let target = recognizer.view as! BubbleView
-        let location = recognizer.locationInView(view)
+        let location = recognizer.locationInView(self)
         switch recognizer.state {
         case .Began:
             // Nothing should come between the user's finger and the view
-            view.bringSubviewToFront(target)
+            self.bringSubviewToFront(target)
             // Capture the initial touch offset from the itemView's center.
             let center = target.center
             offset.x = location.x - center.x
@@ -255,12 +266,12 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
             addBehaviors(target)
             target.transform = CGAffineTransformIdentity
             let behavior = bubbleBehaviors[target]
-            let velocity = recognizer.velocityInView(view)
+            let velocity = recognizer.velocityInView(self)
             let amplifiedVelocity = CGPoint(x: velocity.x * 2.0, y: velocity.y * 2.0)
             behavior!.addLinearVelocity(amplifiedVelocity)
         case .Changed:
 
-            let referenceBounds = view.bounds
+            let referenceBounds = bounds
             let referenceWidth = referenceBounds.width
             let referenceHeight = referenceBounds.height
 
@@ -294,7 +305,7 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
         bubble.addGestureRecognizer(tapRecognizer)
         tapRecognizers[bubble] = tapRecognizer
         bubble.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-        view.addSubview(bubble)
+        addSubview(bubble)
         indexToBubble[bubble.index!] = bubble
         addBehaviors(bubble)
     }
@@ -310,7 +321,7 @@ public class BubbleViewController: UIViewController, UICollisionBehaviorDelegate
     // MARK: Animation
     private func animateRemoveSubview(view: UIView) {
         // The view shouldn't cover anything as it leaves
-        self.view.sendSubviewToBack(view)
+        sendSubviewToBack(view)
         UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 2.0, options: .CurveEaseIn, animations: {
             view.transform = CGAffineTransformMakeScale(0.1, 0.1)
         }) { (_) in
