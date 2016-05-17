@@ -44,6 +44,14 @@ public class BubblesView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public override func layoutSubviews() {
+        if let focused = focusedBubble {
+            // Snap the bubble to the new center
+            disengageFocused(focused)
+            configureFocused(focused)
+        }
+    }
+
     /**
      Tear everything down and load afresh
      */
