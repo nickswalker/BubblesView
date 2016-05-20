@@ -312,7 +312,7 @@ public class BubblesView: UIView {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapBubble))
         bubble.addGestureRecognizer(tapRecognizer)
         tapRecognizers[bubble] = tapRecognizer
-        bubble.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+        bubble.frame = CGRect(origin: center, size: CGSize(width: 100, height: 100))
         addSubview(bubble)
         indexToBubble[bubble.index!] = bubble
         addBehaviors(bubble)
