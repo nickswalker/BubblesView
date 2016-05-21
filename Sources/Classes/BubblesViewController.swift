@@ -17,10 +17,13 @@ public class BubblesViewController: UIViewController, UICollisionBehaviorDelegat
         view = UIView(frame: UIScreen.mainScreen().bounds)
         view.backgroundColor = .whiteColor()
         view.addSubview(bubblesView)
-        bubblesView.topAnchor.constraintEqualToAnchor(view.topAnchor)
-        bubblesView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
-        bubblesView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
-        bubblesView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        bubblesView.translatesAutoresizingMaskIntoConstraints = false
+        let top = bubblesView.topAnchor.constraintEqualToAnchor(view.topAnchor)
+        let right = bubblesView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
+        let bottom = bubblesView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
+        let left = bubblesView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        view.addConstraints([top, right, bottom, left])
+        view.setNeedsLayout()
     }
 
 }

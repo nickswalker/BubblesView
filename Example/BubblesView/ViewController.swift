@@ -7,15 +7,16 @@
 //
 
 import UIKit
-import BubbleViewController
+import BubblesView
 
 class ViewController: BubblesViewController {
-    let numberSupplier = DataSource()
+    let colorDataSource = BubblesViewHueSpaceDataSource(levels: 3, divisions: 6)
     var path = [Int]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bubblesView.dataSource = numberSupplier
+        bubblesView.dataSource = colorDataSource
+        bubblesView.delegate = self
         bubblesView.reloadData()
         // Do any additional setup after loading the view, typically from a nib.
     }
@@ -30,13 +31,16 @@ class ViewController: BubblesViewController {
 
 extension ViewController: BubblesViewDelegate {
     func didSelectBubble(bubble: Int) {
-        if bubble == numberSupplier.focused && path.count > 0{
+        guard colorDataSource.shouldAllowFocus(bubble) else {
+            return
+        }
+        if bubble == colorDataSource.focused && path.count > 0{
             let prev = path.removeLast()
-            numberSupplier.focused = prev
+            colorDataSource.focused = prev
             bubblesView.focus(prev)
-        } else if bubble != numberSupplier.focused {
-            path.append(numberSupplier.focused)
-            numberSupplier.focused = bubble
+        } else if bubble != colorDataSource.focused {
+            path.append(colorDataSource.focused)
+            colorDataSource.focused = bubble
             bubblesView.focus(bubble)
         }
     }

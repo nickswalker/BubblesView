@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name             = "BubbleViewController"
+  s.name             = "BubblesView"
   s.version          = "0.1.0"
   s.summary          = "Navigate data represented as a graph"
 
@@ -14,6 +14,6 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '9.0'
 
-  s.source_files = 'BubbleViewController/Classes/**/*'
+  s.source_files = 'Sources/Classes/**/*'
 
 end
