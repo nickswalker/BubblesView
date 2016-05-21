@@ -330,7 +330,7 @@ public class BubblesView: UIView {
     private func animateRemoveSubview(view: UIView) {
         // The view shouldn't cover anything as it leaves
         sendSubviewToBack(view)
-        UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 2.0, options: .CurveEaseIn, animations: {
+        UIView.animateWithDuration(0.3, delay: 0.0, options: .CurveEaseInOut, animations: { 
             view.transform = CGAffineTransformMakeScale(0.1, 0.1)
         }) { (_) in
             view.removeFromSuperview()
