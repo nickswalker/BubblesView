@@ -1,16 +1,16 @@
 PODS:
-  - BubbleViewController (0.1.0)
+  - BubblesView (0.1.0)
 
 DEPENDENCIES:
-  - BubbleViewController (from `../`)
+  - BubblesView (from `../`)
 
 EXTERNAL SOURCES:
-  BubbleViewController:
+  BubblesView:
     :path: "../"
 
 SPEC CHECKSUMS:
-  BubbleViewController: 99b3d78994b1479847b2610739ddb85c4fdc369a
+  BubblesView: ce678da4e0939b841292c9ab19b47ef3d5c68fa9
 
-PODFILE CHECKSUM: 84b66bae748d1510c035346c86cfdbaeb50672a4
+PODFILE CHECKSUM: 48014812d93d0d923d045f0ccdb4c5b35a13713f
 
-COCOAPODS: 1.0.0.rc.2
+COCOAPODS: 1.0.0
