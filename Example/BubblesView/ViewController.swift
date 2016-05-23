@@ -10,7 +10,7 @@ import UIKit
 import BubblesView
 
 class ViewController: BubblesViewController {
-    let colorDataSource = BubblesViewHueSpaceDataSource(levels: 3, divisions: 6)
+    let colorDataSource = BubblesViewHueSpaceDataSource(levels: 3, divisions: 7)
     var path = [Int]()
     
     override func viewDidLoad() {
