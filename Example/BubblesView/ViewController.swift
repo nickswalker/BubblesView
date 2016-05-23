@@ -18,7 +18,7 @@ class ViewController: BubblesViewController {
         bubblesView.dataSource = colorDataSource
         bubblesView.delegate = self
         bubblesView.reloadData()
-        //bubblesView.gravityEffect = true
+        //bubblesView.animator.gravityEffect = true
         bubblesView.backgroundColor = .clearColor()
         view.backgroundColor = .blackColor()
     }
