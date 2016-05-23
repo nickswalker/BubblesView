@@ -18,12 +18,17 @@ class ViewController: BubblesViewController {
         bubblesView.dataSource = colorDataSource
         bubblesView.delegate = self
         bubblesView.reloadData()
-        // Do any additional setup after loading the view, typically from a nib.
+        //bubblesView.gravityEffect = true
+        bubblesView.backgroundColor = .clearColor()
+        view.backgroundColor = .blackColor()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    }
+
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
     }
 
 }
@@ -37,11 +42,11 @@ extension ViewController: BubblesViewDelegate {
         if bubble == colorDataSource.focused && path.count > 0{
             let prev = path.removeLast()
             colorDataSource.focused = prev
-            bubblesView.focus(prev)
+            bubblesView.focus(index: prev)
         } else if bubble != colorDataSource.focused {
             path.append(colorDataSource.focused)
             colorDataSource.focused = bubble
-            bubblesView.focus(bubble)
+            bubblesView.focus(index: bubble)
         }
     }
 }

@@ -8,14 +8,13 @@
 
 import Foundation
 import BubblesView
-//
+import HUSLSwift
 
 class BubblesViewHueSpaceDataSource: BubblesViewDataSource {
-    // Indices will be into an imaginary array of size 8^h
+    // Indices will be into an imaginary array of size sum 8]6^k for k in 0...h
     var focused: Int
     let inOrderMapping: [Int]
     let tree: CompleteKaryTree
-
     init(levels: Int, divisions: Int) {
 
         tree = CompleteKaryTree(children: divisions, height: levels)
@@ -44,19 +43,29 @@ class BubblesViewHueSpaceDataSource: BubblesViewDataSource {
     func configureBubble(index: Int) -> BubbleView {
         let view = BubbleView()
         let position = inOrderMapping[index]
-        view.backgroundColor = colorForPosition(position)
+        let normalizedPosition = Double(position) / Double(tree.size)
+        let offsetPosition = applyOffset(normalizedPosition)
+        if index == 0 {
+            view.backgroundColor = .whiteColor()
+        } else {
+            view.backgroundColor = colorForPosition(offsetPosition)
+        }
+
+        if index != 0 {
+            let hueDegrees = abs(round(offsetPosition * 360.0))
+            let hueString = String(format: "%.0f", hueDegrees)
+            view.label.text = "\(hueString)°"
+        }
         return view
     }
 
-    // Maps the color wheel onto 0..<2^k + 1
-    // There are 255^3 colors, 
+    private func applyOffset(position: Double) -> Double {
+        let shifted = position + (30.61 / 360.0)
+        return shifted > 1.0 ? 1.0 - shifted: shifted
+    }
 
-    private func colorForPosition(position: Int) -> UIColor {
-        if position == tree.size / 2 {
-            return .grayColor()
-        }
-        let normalized = CGFloat(position) / CGFloat(tree.size)
-        return UIColor(hue: normalized, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+    private func colorForPosition(position: Double) -> UIColor {
+        return UIColor(hue: position * 360.0, saturation: 100.0, lightness: 60.0, alpha: 1.0)
     }
 
     func shouldAllowFocus(index: Int) -> Bool {
