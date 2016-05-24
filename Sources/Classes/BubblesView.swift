@@ -60,7 +60,6 @@ public class BubblesView: UIView {
 
         // Remove all related
         let currentRelatedViews = currentRelated.map{indexToBubble[$0]}.flatMap{$0}
-        currentRelatedViews.forEach{self.disengageRelated($0)}
         currentRelatedViews.forEach{removeBubble($0)}
 
         // Add new focused
@@ -78,7 +77,6 @@ public class BubblesView: UIView {
             bubble.index = index
             let position = positionClock.advance(withCenter: center)
             self.addBubble(bubble, origin: position)
-            self.configureRelated(bubble)
             self.animator.addAttachment(bubble)
         }
     }
@@ -122,7 +120,6 @@ public class BubblesView: UIView {
             return temp
         }()
         let removeViews = toRemove.map{self.indexToBubble[$0]!}
-        removeViews.forEach{self.disengageRelated($0)}
         removeViews.forEach{self.animator.removeAttachment($0)}
         removeViews.forEach{self.removeBubble($0)}
 
@@ -144,7 +141,6 @@ public class BubblesView: UIView {
             // It would be in removeViews, but we specifically excluded it. We need
             // to remove its relation
             let toBeFocused = indexToBubble[focusIndex]!
-            disengageRelated(toBeFocused)
             animator.removeAttachment(toBeFocused)
             animator.configureFocused(toBeFocused)
         } else {
@@ -162,7 +158,6 @@ public class BubblesView: UIView {
             // Two cases. Current focused is in the new related or it isn't
             if (newRelated.contains(oldFocused.index!)) {
 
-                configureRelated(oldFocused)
                 animator.addAttachment(oldFocused)
             } else {
                 removeBubble(oldFocused)
@@ -178,31 +173,17 @@ public class BubblesView: UIView {
         }
         addViews.forEach{let position = self.positionClock.advance(withCenter: self.center)
             self.addBubble($0, origin: position)}
-        addViews.forEach{self.configureRelated($0)}
         addViews.forEach{self.animator.addAttachment($0)}
         currentRelated = newRelated
 
+        // Make sure we aren't leaking resources
+        assert(tapRecognizers.count == 1 + currentRelated.count)
+        assert(panRecognizers.count == 1 + currentRelated.count)
         /*assert(relatedAttachments.count == currentRelated.count)
         assert(gravityBehavior.items.count == 1 + currentRelated.count)
         assert(collisionBehavior.items.count == 1 + currentRelated.count)
          */
     }
-
-    // MARK: Related
-
-    private func configureRelated(bubble: BubbleView){
-        assert(bubble.index != nil)
-        let panRecognizer = UIPanGestureRecognizer()
-        panRecognizer.addTarget(self, action: #selector(didPanBubble))
-        bubble.addGestureRecognizer(panRecognizer)
-        panRecognizers[bubble] = panRecognizer
-    }
-
-    private func disengageRelated(bubble: BubbleView){
-        bubble.removeGestureRecognizer(panRecognizers[bubble]!)
-        panRecognizers.removeValueForKey(bubble)
-    }
-
 
     // MARK: Gesture Recognizers
     func didTapBubble(recognizer: UITapGestureRecognizer){
@@ -215,6 +196,11 @@ public class BubblesView: UIView {
 
     func didPanBubble(recognizer: UIPanGestureRecognizer) {
         let target = recognizer.view as! BubbleView
+
+        // Don't allow dragging the focused
+        if target == focusedBubble {
+            return
+        }
         let location = recognizer.locationInView(self)
         switch recognizer.state {
         case .Began:
@@ -272,6 +258,12 @@ public class BubblesView: UIView {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapBubble))
         bubble.addGestureRecognizer(tapRecognizer)
         tapRecognizers[bubble] = tapRecognizer
+
+        let panRecognizer = UIPanGestureRecognizer()
+        panRecognizer.addTarget(self, action: #selector(didPanBubble))
+        bubble.addGestureRecognizer(panRecognizer)
+        panRecognizers[bubble] = panRecognizer
+
         bubble.frame = CGRect(origin: origin, size: CGSize(width: 100, height: 100))
         bubble.transform = CGAffineTransformMakeScale(0.1, 0.1)
         addSubview(bubble)
@@ -282,6 +274,7 @@ public class BubblesView: UIView {
     }
 
     private func removeBubble(bubble: BubbleView) {
+        panRecognizers.removeValueForKey(bubble)
         tapRecognizers.removeValueForKey(bubble)
         animator.removeBehaviors(bubble)
         animator.animateRemoveSubview(bubble)
