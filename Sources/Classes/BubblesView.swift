@@ -3,12 +3,12 @@ import CoreMotion
 
 public protocol BubblesViewDataSource {
     func focusedBubble() -> Int
-    func relatedForBubble(bubble: Int) -> Set<Int>
+    func relatedForBubble(index: Int) -> Set<Int>
     func configureBubble(index: Int) -> BubbleView
 }
 
 public protocol BubblesViewDelegate {
-    func didSelectBubble(bubble: Int)
+    func didSelectBubble(index: Int)
 }
 
 public class BubblesView: UIView {
@@ -31,9 +31,13 @@ public class BubblesView: UIView {
     var focusedBubble: BubbleView?
 
     // MARK: Initialization
-    override init(frame: CGRect) {
+    override convenience init(frame: CGRect) {
+        self.init(frame: frame, animator: BouncyAnimator.self)
+    }
+
+    init(frame: CGRect, animator: BubblesViewAnimator.Type) {
         super.init(frame: frame)
-        animator = BubblesViewAnimator(owner: self)
+        self.animator = animator.init(owner: self)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -54,8 +58,9 @@ public class BubblesView: UIView {
 
         // Remove focused
         if let oldFocused = focusedBubble {
-            animator.disengageFocused(oldFocused)
+            animator.removeFocusedBehaviors(oldFocused)
             removeBubble(oldFocused)
+            focusedBubble = nil
         }
 
         // Remove all related
@@ -67,7 +72,8 @@ public class BubblesView: UIView {
         let newFocused = dataSource.configureBubble(focusedIndex)
         newFocused.index = focusedIndex
         addBubble(newFocused, origin: center)
-        animator.configureFocused(newFocused)
+        focusedBubble = newFocused
+        animator.addFocusedBehaviors(newFocused)
 
         // Add new related
         let related = dataSource.relatedForBubble(focusedIndex)
@@ -77,7 +83,7 @@ public class BubblesView: UIView {
             bubble.index = index
             let position = positionClock.advance(withCenter: center)
             self.addBubble(bubble, origin: position)
-            self.animator.addAttachment(bubble)
+            self.animator.addRelatedBehaviors(bubble)
         }
     }
 
@@ -120,19 +126,20 @@ public class BubblesView: UIView {
             return temp
         }()
         let removeViews = toRemove.map{self.indexToBubble[$0]!}
-        removeViews.forEach{self.animator.removeAttachment($0)}
+        removeViews.forEach{self.animator.removeRelatedBehaviors($0)}
         removeViews.forEach{self.removeBubble($0)}
 
         let toKeep = newRelated.intersect(currentRelated)
         // The keepers still need to be disengaged from the current focus
         let keepViews = toKeep.map{self.indexToBubble[$0]!}
-        keepViews.forEach{self.animator.removeAttachment($0)}
+        keepViews.forEach{self.animator.removeRelatedBehaviors($0)}
 
         // Focus.
         // Is there a current focused?
         let oldFocused = focusedBubble
         if let oldFocused = oldFocused {
-            self.animator.disengageFocused(oldFocused)
+            self.animator.removeFocusedBehaviors(oldFocused)
+            focusedBubble = nil
         }
 
         assert(focusedBubble == nil)
@@ -141,15 +148,17 @@ public class BubblesView: UIView {
             // It would be in removeViews, but we specifically excluded it. We need
             // to remove its relation
             let toBeFocused = indexToBubble[focusIndex]!
-            animator.removeAttachment(toBeFocused)
-            animator.configureFocused(toBeFocused)
+            animator.removeRelatedBehaviors(toBeFocused)
+            focusedBubble = toBeFocused
+            animator.addFocusedBehaviors(toBeFocused)
         } else {
             // Get the fresh focused view
             let newFocused = self.dataSource!.configureBubble(focusIndex)
             newFocused.index = focusIndex
             // We have to add it to the hierarchy
             addBubble(newFocused, origin: center)
-            animator.configureFocused(newFocused)
+            focusedBubble = newFocused
+            animator.addFocusedBehaviors(newFocused)
         }
 
         assert(focusedBubble?.index == focusIndex)
@@ -158,13 +167,13 @@ public class BubblesView: UIView {
             // Two cases. Current focused is in the new related or it isn't
             if (newRelated.contains(oldFocused.index!)) {
 
-                animator.addAttachment(oldFocused)
+                animator.addRelatedBehaviors(oldFocused)
             } else {
                 removeBubble(oldFocused)
             }
         }
 
-        keepViews.forEach{self.animator.addAttachment($0)}
+        keepViews.forEach{self.animator.addRelatedBehaviors($0)}
 
         let addViews = toAdd.map{ index -> BubbleView in
             let newBubble = self.dataSource!.configureBubble(index)
@@ -173,7 +182,7 @@ public class BubblesView: UIView {
         }
         addViews.forEach{let position = self.positionClock.advance(withCenter: self.center)
             self.addBubble($0, origin: position)}
-        addViews.forEach{self.animator.addAttachment($0)}
+        addViews.forEach{self.animator.addRelatedBehaviors($0)}
         currentRelated = newRelated
 
         // Make sure we aren't leaking resources
@@ -212,11 +221,11 @@ public class BubblesView: UIView {
             offset.y = location.y - center.y
 
             // Free the bubble from animator
-            animator.removeAttachment(target)
+            animator.removeRelatedBehaviors(target)
             animator.removeBehaviors(target)
             target.transform = CGAffineTransformMakeScale(1.05, 1.05)
         case .Cancelled, .Ended:
-            animator.addAttachment(target)
+            animator.addRelatedBehaviors(target)
             animator.addBehaviors(target)
             target.transform = CGAffineTransformIdentity
 

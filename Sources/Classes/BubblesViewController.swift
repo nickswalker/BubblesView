@@ -1,6 +1,6 @@
 import UIKit
 
-public class BubblesViewController: UIViewController, UICollisionBehaviorDelegate {
+public class BubblesViewController: UIViewController {
     public var bubblesView = BubblesView(frame: CGRectZero)
 
     // MARK: Initialization
