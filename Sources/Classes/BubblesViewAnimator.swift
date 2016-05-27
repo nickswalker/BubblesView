@@ -21,22 +21,77 @@
 
 import Foundation
 
+/// The interface that should be provided by the object that manages animations for a BubbleView
 public protocol BubblesViewAnimator {
+    /// The view that this animator is animating the contents of
     weak var view: BubblesView! { get }
 
+    /**
+     Configures the animator for a new BubblesView
+
+     - parameter view: the view which the animator will manage
+     */
     func configureForView(view: BubblesView)
 
+    /**
+     Defines how a certain view should behave in the animation system. Called
+     when a bubble should enter the animation system
+
+     - parameter bubble: the bubble entering the animation system
+     */
     func addBehaviors(bubble: BubbleView)
+
+    /**
+     Removes a view from the animation system. If the bubble was related or focused, the BubblesView
+     will have called the appropriate methods to remove these behaviors before calling this method.
+
+     - parameter bubble: the bubble to remove from the animation system
+     */
     func removeBehaviors(bubble: BubbleView)
 
+    /**
+     Defines the behaviors for a bubble that is related to the current focused view.
+     Called once the focused view has been configured. A bubble that is related will not become
+     focused without first having `removeRelatedBehaviors` called.
+
+     - parameter bubble: the bubble that is related to the focused view
+     */
     func addRelatedBehaviors(bubble: BubbleView)
+
+    /**
+     Removes the behaviors for a bubble that is related to the current focused view.
+
+     - parameter bubble: the bubble that is related to the focused view
+     */
     func removeRelatedBehaviors(bubble: BubbleView)
 
+    /**
+     Defines the behaviors for the focused bubble. The focused bubble is guaranteed not to be
+     one of the currently "related" bubbles.
+
+     - parameter bubble: the focused bubble
+     */
     func addFocusedBehaviors(bubble: BubbleView)
+
+    /**
+     Removes the behaviors of the focused bubble.
+
+     - parameter bubble: the focused bubble
+     */
     func removeFocusedBehaviors(bubble: BubbleView)
 
+    /**
+     Suggests that the animator add velocity to a particular bubble under its management
+
+     - parameter bubble:   the bubble that should be animated
+     - parameter velocity: the velocity vector that should be added
+     */
     func addVelocity(bubble: BubbleView, velocity: CGVector)
 
+    /**
+     Called to notify the animation system that the frame of the view it is 
+     animating has changed.
+     */
     func layoutChanged()
 }
 
@@ -54,9 +109,9 @@ extension BubblesViewAnimator {
     }
 
     /**
-     Useful for animating in new subviews
+     Animates the view's current transform to the identity. Useful for animating-in new subviews
 
-     - parameter view: <#view description#>
+     - parameter view: the view to animate
      */
     func animateToNormalSize(view: UIView) {
         animateToScale(view, scale: 1.0)

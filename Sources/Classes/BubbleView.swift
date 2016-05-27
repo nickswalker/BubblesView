@@ -22,34 +22,40 @@
 import Foundation
 import UIKit
 
+/// A circle with a centered label and/or a background image.
 public class BubbleView: UIView {
     public var label = UILabel()
     public var imageView = UIImageView()
 
+    /// The index that this bubble represents in its parent BubblesView
     internal var index: Int?
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(label)
         addSubview(imageView)
-        imageView.leadingAnchor.constraintEqualToAnchor(leadingAnchor)
-        imageView.trailingAnchor.constraintEqualToAnchor(trailingAnchor)
-        imageView.topAnchor.constraintEqualToAnchor(topAnchor)
-        imageView.bottomAnchor.constraintEqualToAnchor(bottomAnchor)
+
+        translatesAutoresizingMaskIntoConstraints = false
+
+        imageView.backgroundColor = .clearColor()
+        let leading = imageView.leadingAnchor.constraintEqualToAnchor(leadingAnchor)
+        let trailing = imageView.trailingAnchor.constraintEqualToAnchor(trailingAnchor)
+        let top = imageView.topAnchor.constraintEqualToAnchor(topAnchor)
+        let bottom = imageView.bottomAnchor.constraintEqualToAnchor(bottomAnchor)
+        //addConstraints([leading, trailing, top, bottom])
 
         label.textColor = .whiteColor()
         label.font = UIFont.boldSystemFontOfSize(21.0)
         label.textAlignment = .Center
 
-        /*
         let centerX = label.centerXAnchor.constraintEqualToAnchor(centerXAnchor)
         let centerY = label.centerYAnchor.constraintEqualToAnchor(centerYAnchor)
 
-        addConstraints([centerX, centerY])
-         */
+        //addConstraints([centerX, centerY])
     }
 
     override public func layoutSubviews() {
+        super.layoutSubviews()
         label.frame = CGRect(origin: CGPointZero, size: label.intrinsicContentSize())
         label.frame = CGRect(x: 10, y: frame.height / 2.0 - label.frame.height / 2.0, width: frame.width - 20.0, height: 30)
         layer.cornerRadius = frame.width / 2.0

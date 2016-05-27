@@ -19,6 +19,7 @@
 //  THE SOFTWARE.
 //
 
+/// A modular counter with helpers to output coordinates on a circle.
 struct PositionClock {
     private var index = 0
     private let divisions: Int
@@ -29,6 +30,14 @@ struct PositionClock {
         self.radius = radius
     }
 
+    /**
+     Place a new point along the circle defined by the radius and the given center. Advances
+     the internal counter, so the next call will generate the next point along the circle.
+
+     - parameter center: the center of the circle on which to generate the point
+
+     - returns: the point on the circle
+     */
     mutating func advance(withCenter center: CGPoint) -> CGPoint {
         let arc =  (2.0 * M_PI) / Double(divisions)
         let vector = generateVector(Double(index) * arc, magnitude: Double(radius))

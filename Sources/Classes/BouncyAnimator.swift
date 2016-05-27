@@ -22,26 +22,20 @@
 import Foundation
 import CoreMotion
 
+/// Presents related bubbles as being attached by a rod to a central focused bubble.
+/// The bubbles do not rotate about their own center, but related bubbles can freely move about the focused,
+/// and can collide with eachother. The views are springy and playful to interact with.
+/// Uses UIDynamicAnimator to provide animation.
 public class BouncyAnimator: BubblesViewAnimator {
-    private var animator: UIDynamicAnimator!
     public weak var view: BubblesView!
 
-    private var focusedSnap: UISnapBehavior?
-
-    private var bubbleBehaviors = [BubbleView: BubbleBehavior]()
-    private var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
-    private var collisionBehavior = UICollisionBehavior()
-
-    private var initialized = false
-
+    /// If true, the view will use the acceloremeter to apply a small force to bubbles to simulate
+    /// gravity in the direction of gravity relative to the device.
     public var gravityEffect: Bool = false {
         didSet(oldValue) {
-            guard initialized else {
-                return
-            }
             if gravityEffect {
                 animator.addBehavior(gravityBehavior)
-                // we need a weak self to avoid creating a retain cycle between self and the motion manager
+                // We need a weak self to avoid creating a retain cycle between self and the motion manager
                 motionManager.startDeviceMotionUpdatesToQueue(motionQueue) { [weak self] motion, error in
                     self?.motionUpdate(motion, error: error)
                 }
@@ -51,6 +45,14 @@ public class BouncyAnimator: BubblesViewAnimator {
             }
         }
     }
+
+
+    private var focusedSnap: UISnapBehavior?
+
+    private var bubbleBehaviors = [BubbleView: BubbleBehavior]()
+    private var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
+    private var collisionBehavior = UICollisionBehavior()
+    private var animator: UIDynamicAnimator!
 
     private var gravityBehavior = UIGravityBehavior()
     private lazy var motionManager = CMMotionManager()
@@ -68,7 +70,6 @@ public class BouncyAnimator: BubblesViewAnimator {
         collisionBehavior.translatesReferenceBoundsIntoBoundary = false
         animator.addBehavior(collisionBehavior)
         //animator.setValue(true, forKey: "debugEnabled")
-        initialized = true
     }
 
     // MARK: Behaviors
@@ -83,7 +84,9 @@ public class BouncyAnimator: BubblesViewAnimator {
 
     public func removeBehaviors(bubble: BubbleView) {
         gravityBehavior.removeItem(bubble)
-        animator.removeBehavior(bubbleBehaviors[bubble]!)
+        if let behavior = bubbleBehaviors[bubble] {
+            animator.removeBehavior(behavior)
+        }
         bubbleBehaviors.removeValueForKey(bubble)
         collisionBehavior.removeItem(bubble)
     }
@@ -138,6 +141,12 @@ public class BouncyAnimator: BubblesViewAnimator {
 
     // MARK: Device Motion
 
+    /**
+     The callback that receives new accelerometer information.
+
+     - parameter motion: motion data
+     - parameter error:
+     */
     internal func motionUpdate(motion: CMDeviceMotion?, error: NSError?) {
         guard let motion = motion where error == nil else {
             return

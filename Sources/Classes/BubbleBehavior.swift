@@ -21,6 +21,8 @@
 
 import Foundation
 
+/// Defines the physical attributes of a bubble view that will be
+/// animated by a UIDynamicAnimator. Very light with no rotation permitted.
 class BubbleBehavior: UIDynamicBehavior {
 
     private let item: UIDynamicItem

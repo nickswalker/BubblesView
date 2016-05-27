@@ -21,7 +21,9 @@
 
 import UIKit
 
+/// View controller with a BubblesView pinned to all sides of its view.
 public class BubblesViewController: UIViewController {
+    /// The BubblesView being managed
     public var bubblesView = BubblesView(frame: CGRectZero)
 
     // MARK: Initialization

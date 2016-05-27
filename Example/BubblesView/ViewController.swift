@@ -37,6 +37,7 @@ class ViewController: BubblesViewController {
         bubblesView.animator = animator
         bubblesView.backgroundColor = .clearColor()
         view.backgroundColor = .blackColor()
+        bubblesView.reloadData()
     }
 
     override func didReceiveMemoryWarning() {
