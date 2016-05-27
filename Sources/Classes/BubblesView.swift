@@ -146,7 +146,7 @@ public class BubblesView: UIView {
         // Add new related
         let related = dataSource.relatedForBubble(focusedIndex)
         currentRelated = related
-        let relatedBubbles = related.forEach { index in
+        related.forEach { index in
             let bubble = dataSource.configureBubble(index)
             bubble.index = index
             let position = positionClock.advance(withCenter: center)

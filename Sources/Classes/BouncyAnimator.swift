@@ -155,7 +155,7 @@ public class BouncyAnimator: BubblesViewAnimator {
         let grav = motion.gravity
         let x = CGFloat(grav.x)
         let y = CGFloat(grav.y)
-        var v = CGVector(dx: x, dy: -y)
+        let v = CGVector(dx: x, dy: -y)
         dispatch_sync(dispatch_get_main_queue()) {
             self.gravityBehavior.gravityDirection = v
             self.gravityBehavior.magnitude = 0.2
@@ -165,7 +165,7 @@ public class BouncyAnimator: BubblesViewAnimator {
     // MARK: Events
 
     public func layoutChanged() {
-        if let focused = view.focusedBubble {
+        if view.focusedBubble != nil {
             // Snap the bubble to the new center
             focusedSnap?.snapPoint = view.center
         }

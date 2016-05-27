@@ -38,20 +38,23 @@ public class BubbleView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
 
         imageView.backgroundColor = .clearColor()
+        /*
         let leading = imageView.leadingAnchor.constraintEqualToAnchor(leadingAnchor)
         let trailing = imageView.trailingAnchor.constraintEqualToAnchor(trailingAnchor)
         let top = imageView.topAnchor.constraintEqualToAnchor(topAnchor)
         let bottom = imageView.bottomAnchor.constraintEqualToAnchor(bottomAnchor)
         //addConstraints([leading, trailing, top, bottom])
-
+         */
         label.textColor = .whiteColor()
         label.font = UIFont.boldSystemFontOfSize(21.0)
         label.textAlignment = .Center
 
+        /*
         let centerX = label.centerXAnchor.constraintEqualToAnchor(centerXAnchor)
         let centerY = label.centerYAnchor.constraintEqualToAnchor(centerYAnchor)
 
         //addConstraints([centerX, centerY])
+         */
     }
 
     override public func layoutSubviews() {
