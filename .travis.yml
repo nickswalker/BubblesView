@@ -4,6 +4,9 @@ osx_image: xcode7.3
 cache: cocoapods
 podfile: Example/Podfile
 
+before_install:
+- gem install cocoapods # Since Travis is not always on latest version
+
 email:
 on_failure: change
 script:
