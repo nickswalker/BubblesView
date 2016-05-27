@@ -1,9 +1,9 @@
-# BubbleViewController
+# BubblesView
 
-[![CI Status](http://img.shields.io/travis/nickswalker/BubbleViewController.svg?style=flat)](https://travis-ci.org/nickswalker/BubbleViewController)
-[![Version](https://img.shields.io/cocoapods/v/BubbleViewController.svg?style=flat)](http://cocoapods.org/pods/BubbleViewController)
-[![License](https://img.shields.io/cocoapods/l/BubbleViewController.svg?style=flat)](http://cocoapods.org/pods/BubbleViewController)
-[![Platform](https://img.shields.io/cocoapods/p/BubbleViewController.svg?style=flat)](http://cocoapods.org/pods/BubbleViewController)
+[![CI Status](http://img.shields.io/travis/nickswalker/BubblesView.svg?style=flat)](https://travis-ci.org/nickswalker/BubblesView)
+[![Version](https://img.shields.io/cocoapods/v/BubblesView.svg?style=flat)](http://cocoapods.org/pods/BubblesView)
+[![License](https://img.shields.io/cocoapods/l/BubblesView.svg?style=flat)](http://cocoapods.org/pods/BubblesView)
+[![Platform](https://img.shields.io/cocoapods/p/BubblesView.svg?style=flat)](http://cocoapods.org/pods/BubblesView)
 
 ## Usage
 
@@ -13,11 +13,11 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Installation
 
-BubbleViewController is available through [CocoaPods](http://cocoapods.org). To install
+BubblesView is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "BubbleViewController"
+pod "BubblesView"
 ```
 
 ## Author
@@ -26,4 +26,4 @@ Nicholas Walker, nick@nickwalker.us
 
 ## License
 
-BubbleViewController is available under the MIT license. See the LICENSE file for more info.
+BubblesView is available under the MIT license. See the LICENSE file for more info.
