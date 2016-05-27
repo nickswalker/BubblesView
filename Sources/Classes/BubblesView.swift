@@ -1,3 +1,24 @@
+//
+//  Copyright (c) 2016 Nick Walker.
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//
+
 import Foundation
 import CoreMotion
 
@@ -24,20 +45,27 @@ public class BubblesView: UIView {
 
     private var positionClock = PositionClock(divisions: 7, radius: 120)
 
-    private var offset = CGPointZero
+    private var dragOffsets = [BubbleView: CGPoint]()
 
-    public private(set) var animator: BubblesViewAnimator!
+    public var animator: BubblesViewAnimator!
 
-    var focusedBubble: BubbleView?
+    private(set) var focusedBubble: BubbleView?
+
+    public var allowsDraggingBubbles = true
+
+    private var currentlyDragging: Bool {
+        return dragOffsets.count != 0
+    }
 
     // MARK: Initialization
     override convenience init(frame: CGRect) {
-        self.init(frame: frame, animator: BouncyAnimator.self)
+        self.init(frame: frame, animator: BouncyAnimator())
     }
 
-    init(frame: CGRect, animator: BubblesViewAnimator.Type) {
+    init(frame: CGRect, animator: BubblesViewAnimator) {
         super.init(frame: frame)
-        self.animator = animator.init(owner: self)
+        self.animator = animator
+        animator.configureForView(self)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -196,6 +224,11 @@ public class BubblesView: UIView {
 
     // MARK: Gesture Recognizers
     func didTapBubble(recognizer: UITapGestureRecognizer){
+        // Don't allow tapping mid pan. Bubbles are disengaged so 
+        // the focus change could go poorly
+        if currentlyDragging {
+            return
+        }
         let target = recognizer.view as! BubbleView
         // It's possible for a bubble to be tapped shortly after its index is niled out
         if let index = target.index {
@@ -204,21 +237,25 @@ public class BubblesView: UIView {
     }
 
     func didPanBubble(recognizer: UIPanGestureRecognizer) {
-        let target = recognizer.view as! BubbleView
-
-        // Don't allow dragging the focused
-        if target == focusedBubble {
-            return
+        // Make sure we have a valid target, don't allow dragging the focused
+        // and respect the bubble dragging option
+        guard let target = recognizer.view as? BubbleView
+            where target != focusedBubble && allowsDraggingBubbles
+            else {
+                return
         }
+
         let location = recognizer.locationInView(self)
         switch recognizer.state {
         case .Began:
             // Nothing should come between the user's finger and the view
             self.bringSubviewToFront(target)
             // Capture the initial touch offset from the itemView's center.
+            var offset = CGPoint()
             let center = target.center
             offset.x = location.x - center.x
             offset.y = location.y - center.y
+            dragOffsets[target] = offset
 
             // Free the bubble from animator
             animator.removeRelatedBehaviors(target)
@@ -232,6 +269,7 @@ public class BubblesView: UIView {
             let velocity = recognizer.velocityInView(self)
             let amplifiedVelocity = CGVector(dx: velocity.x * 2.0, dy: velocity.y * 2.0)
             animator.addVelocity(target, velocity: amplifiedVelocity)
+            dragOffsets.removeValueForKey(target)
         case .Changed:
 
             let referenceBounds = bounds
@@ -244,6 +282,7 @@ public class BubblesView: UIView {
             let itemHalfHeight = itemBounds.height / 2.0
 
             var newLocation = location
+            let offset = dragOffsets[target]!
             // Apply the initial offset.
             newLocation.x -= offset.x
             newLocation.y -= offset.y
@@ -263,7 +302,7 @@ public class BubblesView: UIView {
 
     // MARK: Bubble insertion/removal
     private func addBubble(bubble: BubbleView, origin: CGPoint) {
-        assert(bubble.index != -1)
+        assert(bubble.index != nil)
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapBubble))
         bubble.addGestureRecognizer(tapRecognizer)
         tapRecognizers[bubble] = tapRecognizer

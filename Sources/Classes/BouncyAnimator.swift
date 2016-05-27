@@ -1,3 +1,24 @@
+//
+//  Copyright (c) 2016 Nick Walker.
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//
+
 import Foundation
 import CoreMotion
 
@@ -11,8 +32,13 @@ public class BouncyAnimator: BubblesViewAnimator {
     private var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
     private var collisionBehavior = UICollisionBehavior()
 
+    private var initialized = false
+
     public var gravityEffect: Bool = false {
         didSet(oldValue) {
+            guard initialized else {
+                return
+            }
             if gravityEffect {
                 animator.addBehavior(gravityBehavior)
                 // we need a weak self to avoid creating a retain cycle between self and the motion manager
@@ -32,13 +58,17 @@ public class BouncyAnimator: BubblesViewAnimator {
 
     // MARK: Initialization
 
-    required public init(owner: BubblesView) {
-        self.view = owner
+    public init() {
+    }
+
+    public func configureForView(view: BubblesView) {
+        self.view = view
         animator = UIDynamicAnimator(referenceView: view)
         collisionBehavior.collisionMode = .Everything
         collisionBehavior.translatesReferenceBoundsIntoBoundary = false
         animator.addBehavior(collisionBehavior)
         //animator.setValue(true, forKey: "debugEnabled")
+        initialized = true
     }
 
     // MARK: Behaviors
@@ -77,8 +107,11 @@ public class BouncyAnimator: BubblesViewAnimator {
     }
 
     public func removeRelatedBehaviors(bubble: BubbleView) {
-        let attachment = relatedAttachments.removeValueForKey(bubble)
-        animator.removeBehavior(attachment!)
+        guard let attachment = relatedAttachments.removeValueForKey(bubble) else {
+            print("No attachment for \(bubble.index)")
+            return
+        }
+        animator.removeBehavior(attachment)
     }
 
     // MARK: Focus
