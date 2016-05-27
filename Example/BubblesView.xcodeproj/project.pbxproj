@@ -18,6 +18,7 @@
 		D43149FB1CF4052C00DA48F2 /* HueSpaceDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43149FA1CF4052C00DA48F2 /* HueSpaceDataSource.swift */; };
 		D4575C5B1CEEBE4A00B810C5 /* CompleteKaryTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4575C5A1CEEBE4A00B810C5 /* CompleteKaryTree.swift */; };
 		D4575C5D1CF126F800B810C5 /* BubblesView.podspec in Resources */ = {isa = PBXBuildFile; fileRef = D4575C5C1CF126F800B810C5 /* BubblesView.podspec */; };
+		D46DCEA21CF819B6007B7226 /* .travis.yml in Resources */ = {isa = PBXBuildFile; fileRef = D46DCEA11CF819B6007B7226 /* .travis.yml */; };
 		DCB4A5E2634820D248E61A30 /* Pods_BubblesView_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D2515B0A6B644CC5DC6ACB /* Pods_BubblesView_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 		D4575C5A1CEEBE4A00B810C5 /* CompleteKaryTree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompleteKaryTree.swift; sourceTree = "<group>"; };
 		D4575C5C1CF126F800B810C5 /* BubblesView.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BubblesView.podspec; path = ../BubblesView.podspec; sourceTree = "<group>"; };
 		D45EC11C1CE289DE00F079A8 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		D46DCEA11CF819B6007B7226 /* .travis.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = .travis.yml; path = ../.travis.yml; sourceTree = "<group>"; };
 		E486DCD52F53D37D4513D62B /* Pods-BubblesView_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BubblesView_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BubblesView_Tests/Pods-BubblesView_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		EBF1086D9625A592F7C480D5 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		F853DF8616B39E568C7E0CE0 /* Pods_BubbleViewController_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BubbleViewController_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -164,6 +166,7 @@
 				D45EC11C1CE289DE00F079A8 /* Podfile */,
 				EBF1086D9625A592F7C480D5 /* README.md */,
 				C4AAA8F171492AD00C913969 /* LICENSE */,
+				D46DCEA11CF819B6007B7226 /* .travis.yml */,
 			);
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D46DCEA21CF819B6007B7226 /* .travis.yml in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				D4575C5D1CF126F800B810C5 /* BubblesView.podspec in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
