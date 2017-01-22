@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = "BubblesView"
   s.version          = "0.1.0"
-  s.summary          = "Navigate data represented as a graph"
+  s.summary          = "Use bubbles to navigate graph data"
 
   s.description      = <<-DESC
     Navigate data represented as a graph.
