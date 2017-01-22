@@ -1,14 +1,29 @@
 language: objective-c
-osx_image: xcode7.3
+osx_image: xcode8.2
 
 cache: cocoapods
 podfile: Example/Podfile
 
+email:
+  on_failure: change
+
+env:
+  global:
+  - LC_CTYPE=en_US.UTF-8
+  - LANG=en_US.UTF-8
+  - WORKSPACE=Example/BubblesView.xcworkspace
+  - IOS_FRAMEWORK_SCHEME="BubblesView"
+  - IOS_SDK=iphonesimulator10.2
+  - IOS_EXAMPLE_SCHEME="BubblesView_Example"
+  matrix:
+  - DESTINATION="OS=10.2,platform=iOS Simulator,id=DB794781-65A7-4884-8D00-AAC3CBD39A44"  SCHEME="$IOS_EXAMPLE_SCHEME"  SDK="$IOS_SD$
+
 before_install:
 - gem install cocoapods # Since Travis is not always on latest version
 
-email:
-on_failure: change
 script:
-- set -o pipefail && xcodebuild test -workspace Example/BubblesView.xcworkspace -scheme BubblesView_Example -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
+- set -o pipefail
+- xcodebuild -version
+- xcodebuild -showsdks
+- xcodebuild test -workspace "$WORKSPACE" -scheme "$IOS_EXAMPLE_SCHEME"  -sdk iphonesimulator -destination "$DESTINATION" ONLY_ACTIVE_ARCH=NO | xcpretty -c
 - pod lib lint
