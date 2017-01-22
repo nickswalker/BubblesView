@@ -26,17 +26,17 @@ import CoreMotion
 /// The bubbles do not rotate about their own center, but related bubbles can freely move about the focused,
 /// and can collide with eachother. The views are springy and playful to interact with.
 /// Uses UIDynamicAnimator to provide animation.
-public class BouncyAnimator: BubblesViewAnimator {
-    public weak var view: BubblesView!
+open class BouncyAnimator: BubblesViewAnimator {
+    open weak var view: BubblesView!
 
     /// If true, the view will use the acceloremeter to apply a small force to bubbles to simulate
     /// gravity in the direction of gravity relative to the device.
-    public var gravityEffect: Bool = false {
+    open var gravityEffect: Bool = false {
         didSet(oldValue) {
             if gravityEffect {
                 animator.addBehavior(gravityBehavior)
                 // We need a weak self to avoid creating a retain cycle between self and the motion manager
-                motionManager.startDeviceMotionUpdatesToQueue(motionQueue) { [weak self] motion, error in
+                motionManager.startDeviceMotionUpdates(to: motionQueue) { [weak self] (motion, error) in
                     self?.motionUpdate(motion, error: error)
                 }
             } else {
@@ -47,26 +47,26 @@ public class BouncyAnimator: BubblesViewAnimator {
     }
 
 
-    private var focusedSnap: UISnapBehavior?
+    fileprivate var focusedSnap: UISnapBehavior?
 
-    private var bubbleBehaviors = [BubbleView: BubbleBehavior]()
-    private var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
-    private var collisionBehavior = UICollisionBehavior()
-    private var animator: UIDynamicAnimator!
+    fileprivate var bubbleBehaviors = [BubbleView: BubbleBehavior]()
+    fileprivate var relatedAttachments = [BubbleView: UIAttachmentBehavior]()
+    fileprivate var collisionBehavior = UICollisionBehavior()
+    fileprivate var animator: UIDynamicAnimator!
 
-    private var gravityBehavior = UIGravityBehavior()
-    private lazy var motionManager = CMMotionManager()
-    private lazy var motionQueue = NSOperationQueue()
+    fileprivate var gravityBehavior = UIGravityBehavior()
+    fileprivate lazy var motionManager = CMMotionManager()
+    fileprivate lazy var motionQueue = OperationQueue()
 
     // MARK: Initialization
 
     public init() {
     }
 
-    public func configureForView(view: BubblesView) {
+    open func configureForView(_ view: BubblesView) {
         self.view = view
         animator = UIDynamicAnimator(referenceView: view)
-        collisionBehavior.collisionMode = .Everything
+        collisionBehavior.collisionMode = .everything
         collisionBehavior.translatesReferenceBoundsIntoBoundary = false
         animator.addBehavior(collisionBehavior)
         //animator.setValue(true, forKey: "debugEnabled")
@@ -74,7 +74,7 @@ public class BouncyAnimator: BubblesViewAnimator {
 
     // MARK: Behaviors
 
-    public func addBehaviors(bubble: BubbleView){
+    open func addBehaviors(_ bubble: BubbleView){
         let bubbleBehavior = BubbleBehavior(item: bubble)
         gravityBehavior.addItem(bubble)
         bubbleBehaviors[bubble] = bubbleBehavior
@@ -82,16 +82,16 @@ public class BouncyAnimator: BubblesViewAnimator {
         collisionBehavior.addItem(bubble)
     }
 
-    public func removeBehaviors(bubble: BubbleView) {
+    open func removeBehaviors(_ bubble: BubbleView) {
         gravityBehavior.removeItem(bubble)
         if let behavior = bubbleBehaviors[bubble] {
             animator.removeBehavior(behavior)
         }
-        bubbleBehaviors.removeValueForKey(bubble)
+        bubbleBehaviors.removeValue(forKey: bubble)
         collisionBehavior.removeItem(bubble)
     }
 
-    public func addVelocity(bubble: BubbleView, velocity: CGVector) {
+    open func addVelocity(_ bubble: BubbleView, velocity: CGVector) {
         if let behavior = bubbleBehaviors[bubble] {
             behavior.addLinearVelocity(CGPoint(x: velocity.dx, y: velocity.dy))
         }
@@ -100,17 +100,17 @@ public class BouncyAnimator: BubblesViewAnimator {
 
     // MARK: Related
 
-    public func addRelatedBehaviors(bubble: BubbleView) {
+    open func addRelatedBehaviors(_ bubble: BubbleView) {
         assert(view.focusedBubble != nil)
-        let attachment = UIAttachmentBehavior(item: bubble, attachedToItem: view.focusedBubble!)
+        let attachment = UIAttachmentBehavior(item: bubble, attachedTo: view.focusedBubble!)
         attachment.length = 120
         relatedAttachments[bubble] = attachment
         animator.addBehavior(attachment)
         collisionBehavior.addItem(bubble)
     }
 
-    public func removeRelatedBehaviors(bubble: BubbleView) {
-        guard let attachment = relatedAttachments.removeValueForKey(bubble) else {
+    open func removeRelatedBehaviors(_ bubble: BubbleView) {
+        guard let attachment = relatedAttachments.removeValue(forKey: bubble) else {
             print("No attachment for \(bubble.index)")
             return
         }
@@ -119,18 +119,18 @@ public class BouncyAnimator: BubblesViewAnimator {
 
     // MARK: Focus
 
-    public func addFocusedBehaviors(bubble: BubbleView) {
+    open func addFocusedBehaviors(_ bubble: BubbleView) {
         assert(bubble.index != nil)
-        let newSnap = UISnapBehavior(item: bubble, snapToPoint: self.view.center)
+        let newSnap = UISnapBehavior(item: bubble, snapTo: self.view.center)
         newSnap.damping = 0.1
-        UIView.animateWithDuration(0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             bubble.center = self.view.center
-        }
+        }) 
         animator.addBehavior(newSnap)
         focusedSnap = newSnap
     }
 
-    public func removeFocusedBehaviors(bubble: BubbleView) {
+    open func removeFocusedBehaviors(_ bubble: BubbleView) {
         // Remove the old bubble
         if let snap = focusedSnap {
             animator.removeBehavior(snap)
@@ -147,8 +147,8 @@ public class BouncyAnimator: BubblesViewAnimator {
      - parameter motion: motion data
      - parameter error:
      */
-    internal func motionUpdate(motion: CMDeviceMotion?, error: NSError?) {
-        guard let motion = motion where error == nil else {
+    internal func motionUpdate(_ motion: CMDeviceMotion?, error: Error?) {
+        guard let motion = motion, error == nil else {
             return
         }
 
@@ -156,7 +156,7 @@ public class BouncyAnimator: BubblesViewAnimator {
         let x = CGFloat(grav.x)
         let y = CGFloat(grav.y)
         let v = CGVector(dx: x, dy: -y)
-        dispatch_sync(dispatch_get_main_queue()) {
+        DispatchQueue.main.sync {
             self.gravityBehavior.gravityDirection = v
             self.gravityBehavior.magnitude = 0.2
         }
@@ -164,7 +164,7 @@ public class BouncyAnimator: BubblesViewAnimator {
 
     // MARK: Events
 
-    public func layoutChanged() {
+    open func layoutChanged() {
         if view.focusedBubble != nil {
             // Snap the bubble to the new center
             focusedSnap?.snapPoint = view.center

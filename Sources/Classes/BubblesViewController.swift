@@ -22,13 +22,13 @@
 import UIKit
 
 /// View controller with a BubblesView pinned to all sides of its view.
-public class BubblesViewController: UIViewController {
+open class BubblesViewController: UIViewController {
     /// The BubblesView being managed
-    public var bubblesView = BubblesView(frame: CGRectZero)
+    open var bubblesView = BubblesView(frame: CGRect.zero)
 
     // MARK: Initialization
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
@@ -36,15 +36,15 @@ public class BubblesViewController: UIViewController {
         super.init(coder: aDecoder)
     }
 
-    public override func loadView() {
-        view = UIView(frame: UIScreen.mainScreen().bounds)
-        view.backgroundColor = .whiteColor()
+    open override func loadView() {
+        view = UIView(frame: UIScreen.main.bounds)
+        view.backgroundColor = .white
         view.addSubview(bubblesView)
         bubblesView.translatesAutoresizingMaskIntoConstraints = false
-        let top = bubblesView.topAnchor.constraintEqualToAnchor(view.topAnchor)
-        let right = bubblesView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
-        let bottom = bubblesView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
-        let left = bubblesView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        let top = bubblesView.topAnchor.constraint(equalTo: view.topAnchor)
+        let right = bubblesView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        let bottom = bubblesView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        let left = bubblesView.leftAnchor.constraint(equalTo: view.leftAnchor)
         view.addConstraints([top, right, bottom, left])
         view.setNeedsLayout()
     }

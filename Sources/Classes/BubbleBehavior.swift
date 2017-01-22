@@ -25,9 +25,9 @@ import Foundation
 /// animated by a UIDynamicAnimator. Very light with no rotation permitted.
 class BubbleBehavior: UIDynamicBehavior {
 
-    private let item: UIDynamicItem
+    fileprivate let item: UIDynamicItem
 
-    private let itemBehavior: UIDynamicItemBehavior
+    fileprivate let itemBehavior: UIDynamicItemBehavior
 
     init(item: UIDynamicItem) {
         self.item = item
@@ -43,8 +43,8 @@ class BubbleBehavior: UIDynamicBehavior {
 
     }
 
-    func addLinearVelocity(velocity: CGPoint) {
-        itemBehavior.addLinearVelocity(velocity, forItem: item)
+    func addLinearVelocity(_ velocity: CGPoint) {
+        itemBehavior.addLinearVelocity(velocity, for: item)
     }
 
 }

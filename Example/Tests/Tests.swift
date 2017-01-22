@@ -29,10 +29,10 @@ class Tests: XCTestCase {
         var clock = PositionClock(divisions: 10, radius: 1)
         var results = [CGPoint]()
         for _ in 0..<10 {
-            results.append(clock.advance(withCenter: CGPointZero))
+            results.append(clock.advance(withCenter: CGPoint.zero))
         }
         for i in 0..<10 {
-            XCTAssertEqual(results[i], clock.advance(withCenter: CGPointZero))
+            XCTAssertEqual(results[i], clock.advance(withCenter: CGPoint.zero))
         }
     }
 
@@ -40,7 +40,7 @@ class Tests: XCTestCase {
         var clock = PositionClock(divisions: 4, radius: 1)
         var results = [CGPoint]()
         for _ in 0..<4 {
-            results.append(clock.advance(withCenter: CGPointZero))
+            results.append(clock.advance(withCenter: CGPoint.zero))
         }
         for i in 0..<4 {
             XCTAssertTrue(0.99...1.01 ~= abs(results[i].x + results[i].y))

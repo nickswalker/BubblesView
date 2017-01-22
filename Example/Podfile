@@ -2,7 +2,7 @@ use_frameworks!
 
 target 'BubblesView_Example' do
   pod 'BubblesView', :path => '../'
-  pod 'HUSLSwift'
+  pod 'HUSLSwift', :git => 'https://github.com/nickswalker/husl-swift.git'
   
   target 'BubblesView_Tests' do
     inherit! :search_paths

@@ -31,7 +31,7 @@ public protocol BubblesViewAnimator {
 
      - parameter view: the view which the animator will manage
      */
-    func configureForView(view: BubblesView)
+    func configureForView(_ view: BubblesView)
 
     /**
      Defines how a certain view should behave in the animation system. Called
@@ -39,7 +39,7 @@ public protocol BubblesViewAnimator {
 
      - parameter bubble: the bubble entering the animation system
      */
-    func addBehaviors(bubble: BubbleView)
+    func addBehaviors(_ bubble: BubbleView)
 
     /**
      Removes a view from the animation system. If the bubble was related or focused, the BubblesView
@@ -47,7 +47,7 @@ public protocol BubblesViewAnimator {
 
      - parameter bubble: the bubble to remove from the animation system
      */
-    func removeBehaviors(bubble: BubbleView)
+    func removeBehaviors(_ bubble: BubbleView)
 
     /**
      Defines the behaviors for a bubble that is related to the current focused view.
@@ -56,14 +56,14 @@ public protocol BubblesViewAnimator {
 
      - parameter bubble: the bubble that is related to the focused view
      */
-    func addRelatedBehaviors(bubble: BubbleView)
+    func addRelatedBehaviors(_ bubble: BubbleView)
 
     /**
      Removes the behaviors for a bubble that is related to the current focused view.
 
      - parameter bubble: the bubble that is related to the focused view
      */
-    func removeRelatedBehaviors(bubble: BubbleView)
+    func removeRelatedBehaviors(_ bubble: BubbleView)
 
     /**
      Defines the behaviors for the focused bubble. The focused bubble is guaranteed not to be
@@ -71,14 +71,14 @@ public protocol BubblesViewAnimator {
 
      - parameter bubble: the focused bubble
      */
-    func addFocusedBehaviors(bubble: BubbleView)
+    func addFocusedBehaviors(_ bubble: BubbleView)
 
     /**
      Removes the behaviors of the focused bubble.
 
      - parameter bubble: the focused bubble
      */
-    func removeFocusedBehaviors(bubble: BubbleView)
+    func removeFocusedBehaviors(_ bubble: BubbleView)
 
     /**
      Suggests that the animator add velocity to a particular bubble under its management
@@ -86,7 +86,7 @@ public protocol BubblesViewAnimator {
      - parameter bubble:   the bubble that should be animated
      - parameter velocity: the velocity vector that should be added
      */
-    func addVelocity(bubble: BubbleView, velocity: CGVector)
+    func addVelocity(_ bubble: BubbleView, velocity: CGVector)
 
     /**
      Called to notify the animation system that the frame of the view it is 
@@ -98,11 +98,11 @@ public protocol BubblesViewAnimator {
 extension BubblesViewAnimator {
     // MARK: Animation Helpers
 
-    func animateRemoveSubview(view: UIView) {
+    func animateRemoveSubview(_ view: UIView) {
         // The view shouldn't cover anything as it leaves
-        self.view.sendSubviewToBack(view)
-        UIView.animateWithDuration(0.3, delay: 0.0, options: .CurveEaseInOut, animations: {
-            view.transform = CGAffineTransformMakeScale(0.1, 0.1)
+        self.view.sendSubview(toBack: view)
+        UIView.animate(withDuration: 0.3, delay: 0.0, options: UIViewAnimationOptions(), animations: {
+            view.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
         }) { (_) in
             view.removeFromSuperview()
         }
@@ -113,19 +113,19 @@ extension BubblesViewAnimator {
 
      - parameter view: the view to animate
      */
-    func animateToNormalSize(view: UIView) {
+    func animateToNormalSize(_ view: UIView) {
         animateToScale(view, scale: 1.0)
     }
 
-    private func animateGrow(view: UIView) {
+    fileprivate func animateGrow(_ view: UIView) {
         animateToScale(view, scale: 1.2)
     }
 
-    private func animateToScale(view: UIView, scale: CGFloat) {
-        UIView.animateWithDuration(0.3, delay: 0.0, options: .CurveEaseInOut, animations: {
-            view.transform = CGAffineTransformMakeScale(scale, scale)
+    fileprivate func animateToScale(_ view: UIView, scale: CGFloat) {
+        UIView.animate(withDuration: 0.3, delay: 0.0, options: UIViewAnimationOptions(), animations: {
+            view.transform = CGAffineTransform(scaleX: scale, y: scale)
         }) { (_) in
-            view.transform = CGAffineTransformMakeScale(scale, scale)
+            view.transform = CGAffineTransform(scaleX: scale, y: scale)
         }
     }
 }
