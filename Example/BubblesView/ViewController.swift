@@ -35,8 +35,8 @@ class ViewController: BubblesViewController {
         //bubblesView.allowsDraggingBubbles = false
         animator.configureForView(bubblesView)
         bubblesView.animator = animator
-        bubblesView.backgroundColor = .clearColor()
-        view.backgroundColor = .blackColor()
+        bubblesView.backgroundColor = .clear
+        view.backgroundColor = .black
         bubblesView.reloadData()
     }
 
@@ -44,15 +44,16 @@ class ViewController: BubblesViewController {
         super.didReceiveMemoryWarning()
     }
 
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return .LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return .lightContent
     }
+
 
 }
 
 
 extension ViewController: BubblesViewDelegate {
-    func didSelectBubble(bubble: Int) {
+    func didSelectBubble(_ bubble: Int) {
         guard colorDataSource.shouldAllowFocus(bubble) else {
             return
         }

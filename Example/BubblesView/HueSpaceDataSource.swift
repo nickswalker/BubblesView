@@ -31,7 +31,7 @@ class HueSpaceDataSource: BubblesViewDataSource {
     init(levels: Int, divisions: Int) {
 
         tree = CompleteKaryTree(children: divisions, height: levels)
-        var temp = [Int](count: tree.size, repeatedValue: -1)
+        var temp = [Int](repeating: -1, count: tree.size)
         let inOrder = tree.generateInOrderTraversal()
         for i in 0..<inOrder.count {
             temp[inOrder[i]] = i
@@ -45,7 +45,7 @@ class HueSpaceDataSource: BubblesViewDataSource {
     }
 
     // This is a tree, so the related are children
-    func relatedForBubble(index: Int) -> Set<Int> {
+    func relatedForBubble(_ index: Int) -> Set<Int> {
         guard !tree.isLeaf(index) else {
             return Set()
         }
@@ -53,13 +53,13 @@ class HueSpaceDataSource: BubblesViewDataSource {
 
     }
 
-    func configureBubble(index: Int) -> BubbleView {
+    func configureBubble(_ index: Int) -> BubbleView {
         let view = BubbleView()
         let position = inOrderMapping[index]
         let normalizedPosition = Double(position) / Double(tree.size)
         let offsetPosition = applyOffset(normalizedPosition)
         if index == 0 {
-            view.backgroundColor = .whiteColor()
+            view.backgroundColor = .white
         } else {
             view.backgroundColor = colorForPosition(offsetPosition)
         }
@@ -72,16 +72,16 @@ class HueSpaceDataSource: BubblesViewDataSource {
         return view
     }
 
-    private func applyOffset(position: Double) -> Double {
+    fileprivate func applyOffset(_ position: Double) -> Double {
         let shifted = position + (30.61 / 360.0)
         return shifted > 1.0 ? 1.0 - shifted: shifted
     }
 
-    private func colorForPosition(position: Double) -> UIColor {
+    fileprivate func colorForPosition(_ position: Double) -> UIColor {
         return UIColor(hue: position * 360.0, saturation: 100.0, lightness: 60.0, alpha: 1.0)
     }
 
-    func shouldAllowFocus(index: Int) -> Bool {
+    func shouldAllowFocus(_ index: Int) -> Bool {
         return !tree.isLeaf(index)
     }
 

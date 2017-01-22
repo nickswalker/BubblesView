@@ -20,6 +20,30 @@
 //
 
 import Foundation
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l >= r
+  default:
+    return !(lhs < rhs)
+  }
+}
+
 
 class CompleteKaryTree {
     let height: Int
@@ -37,20 +61,20 @@ class CompleteKaryTree {
         let denominator = Float(children - 1)
         size = Int(numerator / denominator)
         root = 0
-        storage = [UInt](count: size,repeatedValue: 0)
+        storage = [UInt](repeating: 0,count: size)
     }
 
-    private func parent(index: Int) -> Int {
+    fileprivate func parent(_ index: Int) -> Int {
         return ((index - 1) / numChildren)
     }
 
-    func children(index: Int) -> [Int] {
+    func children(_ index: Int) -> [Int] {
         var result = [Int]()
         (1...numChildren).forEach{result.append(self.numChildren * index + $0)}
         return result
     }
 
-    func isLeaf(index: Int) -> Bool {
+    func isLeaf(_ index: Int) -> Bool {
         return children(index).first >= size
     }
 
@@ -61,7 +85,7 @@ class CompleteKaryTree {
         return result
     }
 
-    private func inOrder(index: Int, inout list: [Int]) {
+    fileprivate func inOrder(_ index: Int, list: inout [Int]) {
         guard !isLeaf(index) else {
             list.append(index)
             return

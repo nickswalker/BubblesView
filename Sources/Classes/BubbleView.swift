@@ -23,9 +23,9 @@ import Foundation
 import UIKit
 
 /// A circle with a centered label and/or a background image.
-public class BubbleView: UIView {
-    public var label = UILabel()
-    public var imageView = UIImageView()
+open class BubbleView: UIView {
+    open var label = UILabel()
+    open var imageView = UIImageView()
 
     /// The index that this bubble represents in its parent BubblesView
     internal var index: Int?
@@ -37,7 +37,7 @@ public class BubbleView: UIView {
 
         translatesAutoresizingMaskIntoConstraints = false
 
-        imageView.backgroundColor = .clearColor()
+        imageView.backgroundColor = .clear
         /*
         let leading = imageView.leadingAnchor.constraintEqualToAnchor(leadingAnchor)
         let trailing = imageView.trailingAnchor.constraintEqualToAnchor(trailingAnchor)
@@ -45,9 +45,9 @@ public class BubbleView: UIView {
         let bottom = imageView.bottomAnchor.constraintEqualToAnchor(bottomAnchor)
         //addConstraints([leading, trailing, top, bottom])
          */
-        label.textColor = .whiteColor()
-        label.font = UIFont.boldSystemFontOfSize(21.0)
-        label.textAlignment = .Center
+        label.textColor = .white
+        label.font = UIFont.boldSystemFont(ofSize: 21.0)
+        label.textAlignment = .center
 
         /*
         let centerX = label.centerXAnchor.constraintEqualToAnchor(centerXAnchor)
@@ -57,9 +57,9 @@ public class BubbleView: UIView {
          */
     }
 
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
-        label.frame = CGRect(origin: CGPointZero, size: label.intrinsicContentSize())
+        label.frame = CGRect(origin: CGPoint.zero, size: label.intrinsicContentSize)
         label.frame = CGRect(x: 10, y: frame.height / 2.0 - label.frame.height / 2.0, width: frame.width - 20.0, height: 30)
         layer.cornerRadius = frame.width / 2.0
     }
@@ -67,8 +67,8 @@ public class BubbleView: UIView {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    public override var collisionBoundsType: UIDynamicItemCollisionBoundsType {
-        return .Ellipse
+    open override var collisionBoundsType: UIDynamicItemCollisionBoundsType {
+        return .ellipse
     }
 }
 

@@ -21,9 +21,9 @@
 
 /// A modular counter with helpers to output coordinates on a circle.
 struct PositionClock {
-    private var index = 0
-    private let divisions: Int
-    private let radius: Int
+    fileprivate var index = 0
+    fileprivate let divisions: Int
+    fileprivate let radius: Int
 
     init(divisions: Int, radius: Int) {
         self.divisions = divisions
@@ -47,7 +47,7 @@ struct PositionClock {
         return position
     }
 
-    private func generateVector(radians: Double, magnitude: Double) -> CGVector {
+    fileprivate func generateVector(_ radians: Double, magnitude: Double) -> CGVector {
         let r = Double(radius)
         return CGVector(dx: r * cos(radians), dy: r * sin(radians))
     }

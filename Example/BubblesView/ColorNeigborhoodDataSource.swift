@@ -35,7 +35,7 @@ class BubblesViewHueSpaceDataSource: BubblesViewDataSource {
     }
 
     // This is a tree, so the related are children
-    func relatedForBubble(index: Int) -> Set<Int> {
+    func relatedForBubble(_ index: Int) -> Set<Int> {
         var results = Set<Int>()
         for i in -4...3 where i != 0{
             let wrapped = { Void -> Int in
@@ -50,7 +50,7 @@ class BubblesViewHueSpaceDataSource: BubblesViewDataSource {
 
     }
 
-    func configureBubble(index: Int) -> BubbleView {
+    func configureBubble(_ index: Int) -> BubbleView {
         let view = BubbleView()
         view.backgroundColor = colorForPosition(index)
         let hueDegrees = Float(index)
@@ -60,11 +60,11 @@ class BubblesViewHueSpaceDataSource: BubblesViewDataSource {
         return view
     }
 
-    private func colorForPosition(position: Int) -> UIColor {
+    fileprivate func colorForPosition(_ position: Int) -> UIColor {
         return UIColor(hue: Double(position), saturation: 100.0, lightness: 60.0, alpha: 1.0)
     }
 
-    func shouldAllowFocus(index: Int) -> Bool {
+    func shouldAllowFocus(_ index: Int) -> Bool {
         return true
     }
 
