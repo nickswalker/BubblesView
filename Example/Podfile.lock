@@ -1,26 +1,27 @@
 PODS:
   - BubblesView (0.1.0)
-  - HUSLSwift (2.0.0)
+  - HSLuvSwift (2.0.0)
 
 DEPENDENCIES:
   - BubblesView (from `../`)
-  - HUSLSwift (from `https://github.com/nickswalker/husl-swift.git`)
+  - HSLuvSwift (from `https://github.com/nickswalker/hsluv-swift.git`, branch `master`)
 
 EXTERNAL SOURCES:
   BubblesView:
     :path: ../
-  HUSLSwift:
-    :git: https://github.com/nickswalker/husl-swift.git
+  HSLuvSwift:
+    :branch: master
+    :git: https://github.com/nickswalker/hsluv-swift.git
 
 CHECKOUT OPTIONS:
-  HUSLSwift:
-    :commit: 0f55ed6d835af0345b264ad34dd754a44a6968ec
-    :git: https://github.com/nickswalker/husl-swift.git
+  HSLuvSwift:
+    :commit: 03086cefacc3bf8025535640105ae551b0a3696c
+    :git: https://github.com/nickswalker/hsluv-swift.git
 
 SPEC CHECKSUMS:
-  BubblesView: ce678da4e0939b841292c9ab19b47ef3d5c68fa9
-  HUSLSwift: 60257a6391a6e25123b009a905da7a30638d3ee9
+  BubblesView: 89550ba892e04ee3056692785e110dfab86648f6
+  HSLuvSwift: 5b637f7ccf959922d1152ae6afd8787b9db1d5a4
 
-PODFILE CHECKSUM: c8bbab469c64993f9e2c9ea7fbcbc7fb1730d5a5
+PODFILE CHECKSUM: da4d571da75af52bf29ba046cae8bfc9260a11f8
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.4.0.rc.1

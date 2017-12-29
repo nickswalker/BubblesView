@@ -21,7 +21,7 @@
 
 import Foundation
 import BubblesView
-import HUSLSwift
+import HSLuvSwift
 
 class HueSpaceDataSource: BubblesViewDataSource {
     // Indices will be into an imaginary array of size sum 8]6^k for k in 0...h

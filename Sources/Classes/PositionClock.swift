@@ -39,7 +39,7 @@ struct PositionClock {
      - returns: the point on the circle
      */
     mutating func advance(withCenter center: CGPoint) -> CGPoint {
-        let arc =  (2.0 * M_PI) / Double(divisions)
+        let arc =  (2.0 * Double.pi) / Double(divisions)
         let vector = generateVector(Double(index) * arc, magnitude: Double(radius))
         let position = CGPoint(x: center.x + vector.dx, y: center.y + vector.dy)
         index += 1

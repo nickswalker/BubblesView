@@ -20,7 +20,7 @@
 //
 import Foundation
 import BubblesView
-import HUSLSwift
+import HSLuvSwift
 
 class BubblesViewHueSpaceDataSource: BubblesViewDataSource {
     // Indices will be into an imaginary array of size sum 8]6^k for k in 0...h
@@ -38,7 +38,7 @@ class BubblesViewHueSpaceDataSource: BubblesViewDataSource {
     func relatedForBubble(_ index: Int) -> Set<Int> {
         var results = Set<Int>()
         for i in -4...3 where i != 0{
-            let wrapped = { Void -> Int in
+            let wrapped = { () -> Int in
                 var neighbor: Int = (index + i * 3) % 360
                 neighbor = neighbor < 0 ? 360 + neighbor : neighbor
                 return neighbor

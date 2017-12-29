@@ -260,7 +260,7 @@ open class BubblesView: UIView {
     }
 
     // MARK: Gesture Recognizers
-    func didTapBubble(_ recognizer: UITapGestureRecognizer){
+    @objc func didTapBubble(_ recognizer: UITapGestureRecognizer){
         // Don't allow tapping mid pan. Bubbles are disengaged so 
         // the focus change could go poorly
         if currentlyDragging {
@@ -273,7 +273,7 @@ open class BubblesView: UIView {
         }
     }
 
-    func didPanBubble(_ recognizer: UIPanGestureRecognizer) {
+    @objc func didPanBubble(_ recognizer: UIPanGestureRecognizer) {
         // Make sure we have a valid target, don't allow dragging the focused
         // and respect the bubble dragging option
         guard let target = recognizer.view as? BubbleView, target != focusedBubble && allowsDraggingBubbles

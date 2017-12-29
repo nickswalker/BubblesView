@@ -111,7 +111,7 @@ open class BouncyAnimator: BubblesViewAnimator {
 
     open func removeRelatedBehaviors(_ bubble: BubbleView) {
         guard let attachment = relatedAttachments.removeValue(forKey: bubble) else {
-            print("No attachment for \(bubble.index)")
+            print("No attachment for \(String(describing: bubble.index))")
             return
         }
         animator.removeBehavior(attachment)
