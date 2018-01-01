@@ -2,11 +2,12 @@ use_frameworks!
 
 target 'BubblesView_Example' do
   pod 'BubblesView', :path => '../'
-  pod 'HSLuvSwift', :git => 'https://github.com/nickswalker/hsluv-swift.git', :branch => 'master'
+  pod 'HSLuvSwift', :git => 'https://github.com/hsluv/hsluv-swift.git', :branch => 'master'
+  platform :ios, '9.0'
   
   target 'BubblesView_Tests' do
     inherit! :search_paths
-
+    platform :ios, '9.0'
     
   end
 end
